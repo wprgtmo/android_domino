@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Domino</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+    <string name="siguiente">Next</string>
+    <string name="Ronda">Rounds: </string>
+    <string name="pareja1">Couple1: </string>
+    <string name="pareja2">Couple2: </string>
+    <string name="mesa">Table: </string>
+    <string name="data">add Date</string>
+    <string name="relog1">Couple1 </string>
+    <string name="relog2">Couple2 </string>
+    <string name="reset">reset</string>
+    <string name="pareja_ganadora">Couple winner: </string>
+    <string name="data_numero">Date: </string>
+    <string name="atras">Previous</string>
+    <string name="aceptar">OK</string>
+    <string name="servidor">Server: </string>
+    <string name="evento">Event: </string>
+    <string name="pausa">Pause</string>
+    <string name="ronda">Round</string>
+    <string name="player1">Player1</string>
+    <string name="player2">Player2</string>
+    <string name="vs">VS</string>
+    <string name="incio">Home</string>
+    <string name="guardar">Guardar</string>
+    <string name="actualizar">Actualizar</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

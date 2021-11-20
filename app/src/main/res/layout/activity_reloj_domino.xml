@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cu.nat.wenisimo.appdomino.RelojDomino">
+
+    <Button
+        android:id="@+id/pareja1B"
+        android:layout_width="250dp"
+        android:layout_height="180dp"
+        android:layout_above="@+id/linearLayout"
+        android:layout_centerHorizontal="true"
+        android:text="@string/relog1"
+        android:textColor="@android:color/background_dark"
+        android:textSize="36sp"
+        android:visibility="invisible" />
+
+    <Chronometer
+        android:id="@+id/pareja1CH"
+        android:layout_width="250dp"
+        android:layout_height="180dp"
+        android:layout_above="@+id/linearLayout"
+        android:layout_alignLeft="@+id/pareja1B"
+        android:layout_alignStart="@+id/pareja1B"
+        android:background="@color/colorAccent"
+        android:gravity="center"
+        android:text="@string/relog1"
+        android:textColor="@android:color/background_dark"
+        android:textSize="36sp" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="368dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/pauseB"
+            android:layout_width="100dp"
+            android:layout_height="60dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:onClick="pause"
+            android:text="@string/pausa"
+            tools:ignore="ButtonStyle" />
+
+        <Button
+            android:id="@+id/resetearB"
+            android:layout_width="100dp"
+            android:layout_height="60dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:onClick="resetear"
+            android:text="@string/reset"
+            tools:ignore="ButtonStyle" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/pareja2B"
+        android:layout_width="250dp"
+        android:layout_height="180dp"
+        android:layout_alignLeft="@+id/pareja1B"
+        android:layout_alignStart="@+id/pareja1B"
+        android:layout_below="@+id/linearLayout"
+        android:text="@string/relog2"
+        android:textColor="@android:color/background_dark"
+        android:textSize="36sp"
+        android:visibility="invisible" />
+
+    <Chronometer
+        android:id="@+id/pareja2CH"
+        android:layout_width="250dp"
+        android:layout_height="180dp"
+        android:layout_alignBottom="@+id/pareja2B"
+        android:layout_alignLeft="@+id/pareja2B"
+        android:layout_alignStart="@+id/pareja2B"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:text="@string/relog1"
+        android:textColor="@android:color/background_dark"
+        android:textSize="36sp" />
+
+</RelativeLayout>
