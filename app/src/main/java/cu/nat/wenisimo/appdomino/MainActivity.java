@@ -25,6 +25,7 @@ import cu.nat.wenisimo.appdomino.fragmentos.FragmentoAddData;
 import cu.nat.wenisimo.appdomino.fragmentos.FragmentoConfiguracion;
 import cu.nat.wenisimo.appdomino.fragmentos.FragmentoRelojDomino;
 import cu.nat.wenisimo.appdomino.fragmentos.FragmentoRonda;
+import cu.nat.wenisimo.appdomino.fragmentos.FragmentoRondaFinal;
 import cu.nat.wenisimo.appdomino.models.Preference;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -37,8 +38,16 @@ public class MainActivity extends AppCompatActivity
         FragmentoConfiguracion.OnFragmentInteractionListener,
         BlankFragment.OnFragmentInteractionListener,
         FragmentoAddData.OnFragmentInteractionListener,
-        FragmentoRelojDomino.OnFragmentInteractionListener {
+        FragmentoRelojDomino.OnFragmentInteractionListener,
+        FragmentoRondaFinal.OnFragmentInteractionListener {
     public static final String MESA_ID = "Mesa_id";
+    public static final String NUMERO_DATA = "NumeroData";
+    public static final String SERVIDOR = "Servidor";
+    public static final String EVENTO_ID = "Evento_id";
+    public static final String RONDA = "Ronda";
+    public static final String PAREJA1 = "Pareja1";
+    public static final String PAREJA2 = "Pareja2";
+    public static final String PAREJA_SALIDORA = "ParejaSalidora";
     public static String baseURL;
     String parejaGanadora = "null", pareja1, pareja2;
     Integer rondas, data = 0;
@@ -128,16 +137,20 @@ public class MainActivity extends AppCompatActivity
             datosFragment = new Bundle();
             datosFragment.putString("Servidor", preferencesClass.datos.getString("Servidor", ""));
             fragmentS.setArguments(datosFragment);
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
         } else if (id == R.id.nav_ronda) {
             fragmentS = new FragmentoRonda();
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
         } else if (id == R.id.nav_inicio) {
             fragmentS = new BlankFragment();
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
         }
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragmento, fragmentS);
         fragmentTransaction.commit();
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
