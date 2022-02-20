@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,20 +112,29 @@ public class FragmentoAddData extends Fragment implements
                 if (!puntosS.equals("")) {
                     if (!paregaGanadoraID.equals(0)) {
                         Integer puntos = Integer.parseInt(puntosS);
-
-
                         preferencesClass.datos = getActivity().getSharedPreferences("datos", Context.MODE_PRIVATE);
                         Integer numeroData = preferencesClass.datos.getInt("NumeroData", 0) + 1;
-
                         SharedPreferences.Editor Obj_preferences = preferencesClass.datos.edit();
                         Obj_preferences.putInt("NumeroData", numeroData);
+                        if (preferencesClass.datos.getString("ParejaSalidora", "").equals("Pareja1")) {
+                            Obj_preferences.putString("ParejaSalidora", "Pareja2");
+                        } else if (preferencesClass.datos.getString("ParejaSalidora", "").equals("Pareja2")) {
+                            Obj_preferences.putString("ParejaSalidora", "Pareja1");
+                        }
                         Obj_preferences.apply();
 
                         crearData(numeroData, boleta_id, puntos, 0, paregaGanadoraID);
 
-//                        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-//                        fragmentTransaction.replace(R.id.fragmento, new FragmentoRelojDomino());
-//                        fragmentTransaction.commit();
+                        Fragment fragmentS;
+                        Bundle datosFragment;
+                        fragmentS = new FragmentoRelojDomino();
+                        datosFragment = new Bundle();
+                        datosFragment.putInt("data", puntos);
+                        datosFragment.putInt("parejaGanadora", paregaGanadoraID);
+                        fragmentS.setArguments(datosFragment);
+                        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.fragmento, fragmentS);
+                        fragmentTransaction.commit();
                     } else {
                         Toast.makeText(getContext(), "Debes escoger el ganador", Toast.LENGTH_LONG).show();
                     }
@@ -214,8 +224,9 @@ public class FragmentoAddData extends Fragment implements
     }
 
     private void llenarData(Data data) {
-        Toast.makeText(getContext(), "LLenando datos Todo OK", Toast.LENGTH_LONG).show();
+
     }
+
 
     private void descargarFoto(String url, ImageView imageView) {
         Glide.with(getContext())
@@ -311,4 +322,5 @@ public class FragmentoAddData extends Fragment implements
             Toast.makeText(getContext(), "Falló: " + throwable.getLocalizedMessage(), Toast.LENGTH_LONG).show();
         }
     }
+
 }

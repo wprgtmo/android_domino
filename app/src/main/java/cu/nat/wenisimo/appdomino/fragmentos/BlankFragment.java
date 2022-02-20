@@ -1,14 +1,37 @@
 package cu.nat.wenisimo.appdomino.fragmentos;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import cu.nat.wenisimo.appdomino.MainActivity;
 import cu.nat.wenisimo.appdomino.R;
+import cu.nat.wenisimo.appdomino.dominoapi.DominoApiService;
+import cu.nat.wenisimo.appdomino.models.Evento;
+import cu.nat.wenisimo.appdomino.models.Mesa;
+import cu.nat.wenisimo.appdomino.models.MesaRespuesta;
+import cu.nat.wenisimo.appdomino.models.Preference;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +46,12 @@ public class BlankFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    Preference preferencesClass;
+    TextView mesasNumero, tituloEvento, comentarioEvento, textViewPagar;
+    ImageView imageViewPagar, imageViewEvento;
+    ArrayList<Mesa> listMesas;
+    ArrayList<Evento> listEvento;
+    View vista;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -55,17 +84,22 @@ public class BlankFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        preferencesClass = new Preference();
+        preferencesClass.datos = getActivity().getSharedPreferences("datos", Context.MODE_PRIVATE);
+        obtenerDatos();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_blank, container, false);
+        vista = inflater.inflate(R.layout.fragment_blank, container, false);
+        mesasNumero = (TextView) vista.findViewById(R.id.MesaNum);
+        tituloEvento = (TextView) vista.findViewById(R.id.TituloEvento);
+        comentarioEvento = (TextView) vista.findViewById(R.id.DesarolloEvento);
+        textViewPagar = (TextView) vista.findViewById(R.id.TVPagar);
+        imageViewPagar = (ImageView) vista.findViewById(R.id.imgPagar);
+        imageViewEvento = (ImageView) vista.findViewById(R.id.imgEvento);
+        return vista;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -92,6 +126,71 @@ public class BlankFragment extends Fragment {
         mListener = null;
     }
 
+    private void llenarEventos(Evento e) {
+        tituloEvento.setText(e.getNombre());
+        descargarFoto(e.getImagen(), imageViewEvento);
+        comentarioEvento.setText(e.getComentario());
+    }
+
+    private void llenarMesas(ArrayList<Mesa> listaMesasObtenidos) {
+        List<String> listaMesas = new ArrayList<>();
+        for (Mesa m : listaMesasObtenidos) {
+
+        }
+    }
+
+    private void descargarFoto(String url, ImageView imageView) {
+        Glide.with(getContext())
+                .load(MainActivity.baseURL + url)
+                .centerCrop()
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(imageView);
+    }
+
+    public void obtenerDatos() {
+        DominoApiService API_SERVICE = api();
+        int ev = preferencesClass.datos.getInt("Evento_id", 1);
+        Call<Evento> Evento = API_SERVICE.obtenerEvento(ev);
+        try {
+            Evento.enqueue(new BlankFragment.EventosCallBack());
+        } catch (Exception e) {
+            Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public DominoApiService api() {
+        DominoApiService API_SERVICE;
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
+        okHttpClient.addInterceptor(loggingInterceptor);
+        preferencesClass.datos = getActivity().getSharedPreferences("datos", Context.MODE_PRIVATE);
+        String baseURL = preferencesClass.datos.getString("Servidor", "");
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseURL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient.build())
+                .build();
+        API_SERVICE = retrofit.create(DominoApiService.class);
+        return API_SERVICE;
+    }
+
+    public void obtenerMesas(Integer evento_id, int num) {
+        DominoApiService API_SERVICE;
+        API_SERVICE = api();
+        Call<MesaRespuesta> Mesas = API_SERVICE.obtenerMesas(evento_id);
+        try {
+            Mesas.enqueue(new BlankFragment.MesasCallBack());
+        } catch (Exception e) {
+            Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
+        preferencesClass.datos = getActivity().getSharedPreferences("datos", Context.MODE_PRIVATE);
+        SharedPreferences.Editor Obj_preferences = preferencesClass.datos.edit();
+        Obj_preferences.putInt("Evento_id", evento_id);
+        Obj_preferences.apply();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -105,5 +204,48 @@ public class BlankFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private class EventosCallBack implements Callback<Evento> {
+
+        @Override
+        public void onResponse(Call<Evento> call, Response<Evento> response) {
+            if (response.isSuccessful()) {
+                Toast.makeText(getContext(), "Conexion exitosa", Toast.LENGTH_LONG).show();
+                Evento eventos = response.body();
+                if (eventos != null) {
+                    llenarEventos(eventos);
+                }
+            } else {
+                Toast.makeText(getContext(), "Error en el formato de respuesta", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        public void onFailure(Call<Evento> call, Throwable throwable) {
+            Toast.makeText(getContext(), "Falló: " + throwable.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private class MesasCallBack implements Callback<MesaRespuesta> {
+
+        @Override
+        public void onResponse(Call<MesaRespuesta> call, Response<MesaRespuesta> response) {
+            if (response.isSuccessful()) {
+                Toast.makeText(getContext(), "Conexion exitosa", Toast.LENGTH_LONG).show();
+                MesaRespuesta mesas = response.body();
+                if (mesas != null) {
+                    listMesas = mesas.getMesas();
+                    llenarMesas(listMesas);
+                }
+            } else {
+                Toast.makeText(getContext(), "Error en el formato de respuesta", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        public void onFailure(Call<MesaRespuesta> call, Throwable throwable) {
+            Toast.makeText(getContext(), "Falló: " + throwable.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }

@@ -7,9 +7,20 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TableLayout;
+import android.widget.ListView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import cu.nat.wenisimo.appdomino.Adapters.BoletaAdapter;
+import cu.nat.wenisimo.appdomino.MainActivity;
 import cu.nat.wenisimo.appdomino.R;
+import cu.nat.wenisimo.appdomino.models.Data;
+import cu.nat.wenisimo.appdomino.models.DatasRespuesta;
+import cu.nat.wenisimo.appdomino.models.Preference;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -26,6 +37,18 @@ public class FragmentoRondaFinal extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     View vista;
+    ListView listView;
+    ArrayList<Data> DDatas;
+    String[] Numero;
+    ArrayList<String> Datas = new ArrayList<>();
+    ArrayList<String> Puntos1 = new ArrayList<>();
+    ArrayList<String> Tantos1 = new ArrayList<>();
+    ArrayList<String> Tantos2 = new ArrayList<>();
+    ArrayList<String> Puntos2 = new ArrayList<>();
+    Integer boleta_id;
+    Preference preferencesClass;
+    String ContadorTantos1;
+    String ContadorTantos2;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -62,14 +85,36 @@ public class FragmentoRondaFinal extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        crearDataBoleta();
+        preferencesClass = new Preference();
+        preferencesClass.datos = getActivity().getSharedPreferences("datos", Context.MODE_PRIVATE);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         vista = inflater.inflate(R.layout.fragment_ronda_final, container, false);
-        TableLayout tableLayout = (TableLayout) vista.findViewById(R.id.tabla);
+        boleta_id = preferencesClass.datos.getInt("Boleta_id", 0);
+        listView = (ListView) vista.findViewById(R.id.ListView);
+        BoletaAdapter adapter = new BoletaAdapter(this.getContext(), DDatas);
+        listView.setAdapter(adapter);
         return vista;
+    }
+
+
+    public void crearDataBoleta() {
+        Call<DatasRespuesta> data = MainActivity.api().obtenerDatasBoleta(boleta_id);
+        try {
+            data.enqueue(new FragmentoRondaFinal.CrearDataBoletaCallBack());
+        } catch (Exception e) {
+            Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void llenarDataBoleta(ArrayList<Data> listaObtenidos) {
+        for (int i = 0; i <= listaObtenidos.size(); i++) {
+            DDatas.add(listaObtenidos.get(i));
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -109,5 +154,24 @@ public class FragmentoRondaFinal extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public class CrearDataBoletaCallBack implements Callback<DatasRespuesta> {
+        @Override
+        public void onResponse(Call<DatasRespuesta> call, Response<DatasRespuesta> response) {
+            if (response.isSuccessful()) {
+                DatasRespuesta data = response.body();
+                if (data != null) {
+                    llenarDataBoleta(data.getData());
+                }
+            } else {
+                Toast.makeText(getContext(), "Error en el formato de respuesta", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        public void onFailure(Call<DatasRespuesta> call, Throwable throwable) {
+            Toast.makeText(getContext(), "Falló: " + throwable.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }

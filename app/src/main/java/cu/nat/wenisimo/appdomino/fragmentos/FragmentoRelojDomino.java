@@ -36,10 +36,10 @@ public class FragmentoRelojDomino extends Fragment {
     // TODO: Rename and change types of parameters
     View vista;
     Chronometer pareja1Cronometro, pareja2Cronometro, tiempoRondaCronometro;
-    String pareja1, pareja2, parejaGanadora = "null";
-    Integer mesas, rondas, data = 0;
+    String pareja1, pareja2;
+    Integer mesas, rondas, data = 0, parejaGanadora = 0;
     ArrayList<Integer> datas = new ArrayList<>();
-    ArrayList<String> parejasGsnadoras = new ArrayList<>();
+    ArrayList<Integer> parejasGsnadoras = new ArrayList<>();
     Boolean noEstanAndando1, noEstanAndando2;
     long tiempoPareja1 = SystemClock.elapsedRealtime();
     long tiempoPareja2 = SystemClock.elapsedRealtime();
@@ -88,7 +88,7 @@ public class FragmentoRelojDomino extends Fragment {
         pareja1 = preferencesClass.datos.getString("Pareja1", "");
         pareja2 = preferencesClass.datos.getString("Pareja2", "");
         data = getArguments().getInt("data");
-        parejaGanadora = getArguments().getString("parejaGanadora");
+        parejaGanadora = getArguments().getInt("parejaGanadora");
         pareja1Cronometro.setFormat(" %s");
         pareja2Cronometro.setFormat(" %s");
         tiempoRondaCronometro.setFormat(" %s");
@@ -117,7 +117,7 @@ public class FragmentoRelojDomino extends Fragment {
         if (data != 0) {
             datas.add(data);
         }
-        if (!parejaGanadora.equals("null")) {
+        if (parejaGanadora != 0) {
             parejasGsnadoras.add(parejaGanadora);
         }
         pausar.setOnClickListener(new View.OnClickListener() {

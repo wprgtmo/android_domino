@@ -163,15 +163,6 @@ public class FragmentoConfiguracion extends Fragment {
         return vista;
     }
 
-    public Boolean TrueFalse(Spinner spinner) {
-        int numero = spinner.getSelectedItemPosition();
-        if (numero == -1) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

@@ -4,6 +4,8 @@ package cu.nat.wenisimo.appdomino.dominoapi;
 import cu.nat.wenisimo.appdomino.models.BoletaPareja;
 import cu.nat.wenisimo.appdomino.models.BoletaRespuesta;
 import cu.nat.wenisimo.appdomino.models.DataRespuesta;
+import cu.nat.wenisimo.appdomino.models.DatasRespuesta;
+import cu.nat.wenisimo.appdomino.models.Evento;
 import cu.nat.wenisimo.appdomino.models.EventoRespuesta;
 import cu.nat.wenisimo.appdomino.models.MesaRespuesta;
 import cu.nat.wenisimo.appdomino.models.ParejaRespuesta;
@@ -20,12 +22,23 @@ public interface DominoApiService {
     @GET("api/eventos")
     Call<EventoRespuesta> obtenerEventos();
 
+    @GET("api/eventos/obtener/{evento_id}")
+    Call<Evento> obtenerEvento(@Path("evento_id") int evento_id);
+
+    //@GET("api/datas/create")
+    //Call<> createDatas();
+
     @GET("api/eventos/iniciados")
     Call<EventoRespuesta> obtenerEventosIniciados();
 
     @FormUrlEncoded
     @POST("api/eventos/mesas")
     Call<MesaRespuesta> obtenerMesas(@Field("evento_id") int evento_id);
+
+
+    @FormUrlEncoded
+    @POST("api/evento/boletas/datas")
+    Call<DatasRespuesta> obtenerDatasBoleta(@Field("boleta_id") int boleta_id);
 
     @GET("api/evento/{evento_id}/mesa/{mesa_id}/parejas")
     Call<ParejasMesaRespuesta> obtenerParejasMesa(@Path("evento_id") int evento_id, @Path("mesa_id") int mesa_id);

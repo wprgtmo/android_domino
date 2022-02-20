@@ -19,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.io.IOException;
+
 import cu.nat.wenisimo.appdomino.dominoapi.DominoApiService;
 import cu.nat.wenisimo.appdomino.fragmentos.BlankFragment;
 import cu.nat.wenisimo.appdomino.fragmentos.FragmentoAddData;
@@ -27,10 +29,13 @@ import cu.nat.wenisimo.appdomino.fragmentos.FragmentoRelojDomino;
 import cu.nat.wenisimo.appdomino.fragmentos.FragmentoRonda;
 import cu.nat.wenisimo.appdomino.fragmentos.FragmentoRondaFinal;
 import cu.nat.wenisimo.appdomino.models.Preference;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
+import okhttp3.Request;
+import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -57,10 +62,12 @@ public class MainActivity extends AppCompatActivity
 
     public static DominoApiService api() {
         DominoApiService API_SERVICE;
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        Interceptor interceptorError = new ErrorInterceptor();
+        //HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        //loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
-        okHttpClient.addInterceptor(loggingInterceptor);
+        //okHttpClient.addInterceptor(loggingInterceptor);
+        //okHttpClient.addInterceptor(interceptorError);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseURL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -147,6 +154,10 @@ public class MainActivity extends AppCompatActivity
             fragmentS = new BlankFragment();
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
+        } else if (id == R.id.nav_resultados) {
+            fragmentS = new FragmentoRondaFinal();
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
         }
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragmento, fragmentS);
@@ -164,5 +175,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    public static class ErrorInterceptor implements Interceptor {
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Request request = chain.request();
+            Response response = chain.proceed(request);
+            int code = response.code();
+
+            if ((code > 299) && (code < 600)) {
+            }
+            return response;
+        }
     }
 }

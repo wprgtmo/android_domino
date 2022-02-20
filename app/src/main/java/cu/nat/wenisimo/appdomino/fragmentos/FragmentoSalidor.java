@@ -166,7 +166,7 @@ public class FragmentoSalidor extends Fragment {
         fragmentS = new FragmentoRelojDomino();
         datosFragment = new Bundle();
         datosFragment.putInt("data", 0);
-        datosFragment.putString("parejaGanadora", "null");
+        datosFragment.putInt("parejaGanadora", 0);
         fragmentS.setArguments(datosFragment);
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragmento, fragmentS);
@@ -187,12 +187,12 @@ public class FragmentoSalidor extends Fragment {
     private void llenarBoleta(Boleta boleta) {
         preferencesClass.datos = getActivity().getSharedPreferences("datos", Context.MODE_PRIVATE);
         SharedPreferences.Editor Obj_preferences = preferencesClass.datos.edit();
+        Obj_preferences.putInt("Boleta_id", Integer.parseInt(boleta.getId()));
         if (iP == 0) {
             Obj_preferences.putString("Pareja1", boleta.getBoleta_parejas().get(0).getPareja().getNombre());
             descargarFoto(boleta.getBoleta_parejas().get(0).getPareja().getJugador1().getFoto(), iv1);
             descargarFoto(boleta.getBoleta_parejas().get(0).getPareja().getJugador2().getFoto(), iv2);
             txtP1Jugador1.setText("Pareja1 ".concat(boleta.getBoleta_parejas().get(0).getPareja().getJugador1().getAlias()));
-
             txtP1Jugador2.setText("Pareja1 ".concat(boleta.getBoleta_parejas().get(0).getPareja().getJugador2().getAlias()));
             iP++;
         } else if (iP == 1) {
