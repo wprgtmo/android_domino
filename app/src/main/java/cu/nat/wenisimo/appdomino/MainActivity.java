@@ -45,9 +45,13 @@ public class MainActivity extends AppCompatActivity
         FragmentoAddData.OnFragmentInteractionListener,
         FragmentoRelojDomino.OnFragmentInteractionListener,
         FragmentoRondaFinal.OnFragmentInteractionListener {
+
+    public static final String EMPTY_STR = "";
+    public static final String DATOS = "datos";
     public static final String MESA_ID = "Mesa_id";
     public static final String NUMERO_DATA = "NumeroData";
     public static final String SERVIDOR = "Servidor";
+    public static final String URL_INICIAL = "http://192.168.1.103/domino_api/";
     public static final String EVENTO_ID = "Evento_id";
     public static final String RONDA = "Ronda";
     public static final String PAREJA1 = "Pareja1";
@@ -85,16 +89,16 @@ public class MainActivity extends AppCompatActivity
         FraInicio = new BlankFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.fragmento, FraInicio).commit();
         preferencesClass = new Preference();
-        preferencesClass.datos = getSharedPreferences("datos", Context.MODE_PRIVATE);
-        if (preferencesClass.datos.getString("Servidor", "").equals("")) {
-            guardarDatos("Servidor", "http://192.168.1.102/domino_api/");
+        preferencesClass.datos = getSharedPreferences(DATOS, Context.MODE_PRIVATE);
+        if (preferencesClass.datos.getString(SERVIDOR, EMPTY_STR).equals(EMPTY_STR)) {
+            guardarDatos(SERVIDOR, URL_INICIAL);
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragmento, new FragmentoConfiguracion());
             fragmentTransaction.commit();
         }
-        baseURL = preferencesClass.datos.getString("Servidor", "");
-        pareja1 = preferencesClass.datos.getString("Pareja1", "");
-        pareja2 = preferencesClass.datos.getString("Pareja2", "");
+        baseURL = preferencesClass.datos.getString(SERVIDOR, EMPTY_STR);
+        pareja1 = preferencesClass.datos.getString(PAREJA1, EMPTY_STR);
+        pareja2 = preferencesClass.datos.getString(PAREJA2, EMPTY_STR);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -142,23 +146,19 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_configuracion) {
             fragmentS = new FragmentoConfiguracion();
             datosFragment = new Bundle();
-            datosFragment.putString("Servidor", preferencesClass.datos.getString("Servidor", ""));
+            datosFragment.putString(SERVIDOR, preferencesClass.datos.getString(SERVIDOR, EMPTY_STR));
             fragmentS.setArguments(datosFragment);
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            drawer.closeDrawer(GravityCompat.START);
         } else if (id == R.id.nav_ronda) {
             fragmentS = new FragmentoRonda();
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            drawer.closeDrawer(GravityCompat.START);
         } else if (id == R.id.nav_inicio) {
             fragmentS = new BlankFragment();
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            drawer.closeDrawer(GravityCompat.START);
         } else if (id == R.id.nav_resultados) {
             fragmentS = new FragmentoRondaFinal();
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            drawer.closeDrawer(GravityCompat.START);
         }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragmento, fragmentS);
         fragmentTransaction.commit();
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void guardarDatos(String key, String valor) {
-        preferencesClass.datos = getSharedPreferences("datos", Context.MODE_PRIVATE);
+        preferencesClass.datos = getSharedPreferences(DATOS, Context.MODE_PRIVATE);
         SharedPreferences.Editor Obj_preferences = preferencesClass.datos.edit();
         Obj_preferences.putString(key, valor);
         Obj_preferences.apply();
