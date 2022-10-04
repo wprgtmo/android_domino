@@ -3,7 +3,9 @@ package cu.nat.wenisimo.appdomino.fragmentos;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +34,7 @@ import retrofit2.Response;
  * create an instance of this fragment.
  */
 public class FragmentoRondaFinal extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
+    // Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -49,10 +51,6 @@ public class FragmentoRondaFinal extends Fragment {
     Preference preferencesClass;
     String ContadorTantos1;
     String ContadorTantos2;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -82,8 +80,9 @@ public class FragmentoRondaFinal extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            // Rename and change types of parameters
+            String mParam1 = getArguments().getString(ARG_PARAM1);
+            String mParam2 = getArguments().getString(ARG_PARAM2);
         }
         crearDataBoleta();
         preferencesClass = new Preference();
@@ -95,7 +94,7 @@ public class FragmentoRondaFinal extends Fragment {
                              Bundle savedInstanceState) {
         vista = inflater.inflate(R.layout.fragment_ronda_final, container, false);
         boleta_id = preferencesClass.datos.getInt("Boleta_id", 0);
-        listView = (ListView) vista.findViewById(R.id.ListView);
+        listView = vista.findViewById(R.id.ListView);
         BoletaAdapter adapter = new BoletaAdapter(this.getContext(), DDatas);
         listView.setAdapter(adapter);
         return vista;
@@ -125,12 +124,12 @@ public class FragmentoRondaFinal extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
+            throw new RuntimeException(context
                     + " must implement OnFragmentInteractionListener");
         }
     }

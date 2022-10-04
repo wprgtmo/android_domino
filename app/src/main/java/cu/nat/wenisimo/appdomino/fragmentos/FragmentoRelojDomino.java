@@ -4,8 +4,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import android.widget.Chronometer;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import cu.nat.wenisimo.appdomino.MainActivity;
 import cu.nat.wenisimo.appdomino.R;
@@ -77,16 +80,17 @@ public class FragmentoRelojDomino extends Fragment {
                              Bundle savedInstanceState) {
         vista = inflater.inflate(R.layout.fragmento_reloj_domino, container, false);
 
-        pareja1Cronometro = (Chronometer) vista.findViewById(R.id.pareja1CH);
-        pareja2Cronometro = (Chronometer) vista.findViewById(R.id.pareja2CH);
-        tiempoRondaCronometro = (Chronometer) vista.findViewById(R.id.Tiempo);
-        pausar = (Button) vista.findViewById(R.id.pauseB);
-        resetear = (Button) vista.findViewById(R.id.resetearB);
-        bData = (Button) vista.findViewById(R.id.addDataB);
+        pareja1Cronometro = vista.findViewById(R.id.pareja1CH);
+        pareja2Cronometro = vista.findViewById(R.id.pareja2CH);
+        tiempoRondaCronometro = vista.findViewById(R.id.Tiempo);
+        pausar = vista.findViewById(R.id.pauseB);
+        resetear = vista.findViewById(R.id.resetearB);
+        bData = vista.findViewById(R.id.addDataB);
         mesas = preferencesClass.datos.getInt(MainActivity.MESA_ID, 0);
         rondas = preferencesClass.datos.getInt("Ronda", 0);
         pareja1 = preferencesClass.datos.getString("Pareja1", "");
         pareja2 = preferencesClass.datos.getString("Pareja2", "");
+        assert getArguments() != null;
         data = getArguments().getInt("data");
         parejaGanadora = getArguments().getInt("parejaGanadora");
         pareja1Cronometro.setFormat(" %s");
@@ -120,89 +124,67 @@ public class FragmentoRelojDomino extends Fragment {
         if (parejaGanadora != 0) {
             parejasGsnadoras.add(parejaGanadora);
         }
-        pausar.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (!noEstanAndando2) {
-                    pareja2Cronometro.stop();
-                    pausaPareja2 = SystemClock.elapsedRealtime() - pareja2Cronometro.getBase();
-                    noEstanAndando2 = true;
-                } else if (!noEstanAndando1) {
-                    pareja1Cronometro.stop();
-                    pausaPareja1 = SystemClock.elapsedRealtime() - pareja1Cronometro.getBase();
-                    noEstanAndando1 = true;
-                }
+        pausar.setOnClickListener(v -> {
+            if (!noEstanAndando2) {
+                pareja2Cronometro.stop();
+                pausaPareja2 = SystemClock.elapsedRealtime() - pareja2Cronometro.getBase();
+                noEstanAndando2 = true;
+            } else if (!noEstanAndando1) {
+                pareja1Cronometro.stop();
+                pausaPareja1 = SystemClock.elapsedRealtime() - pareja1Cronometro.getBase();
+                noEstanAndando1 = true;
             }
         });
 
-        resetear.setOnClickListener(new View.OnClickListener() {
+        resetear.setOnClickListener(v -> Toast.makeText(getContext(), "Tiempo de juego" + tiempoRondaCronometro.getText(), Toast.LENGTH_LONG).show());
 
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(), "Tiempo de juego" + tiempoRondaCronometro.getText(), Toast.LENGTH_LONG).show();
+        bData.setOnClickListener(v -> {
+            if (!noEstanAndando2) {
+                pareja2Cronometro.stop();
+                pausaPareja2 = SystemClock.elapsedRealtime() - pareja2Cronometro.getBase();
+                noEstanAndando2 = true;
+            } else if (!noEstanAndando1) {
+                pareja1Cronometro.stop();
+                pausaPareja1 = SystemClock.elapsedRealtime() - pareja1Cronometro.getBase();
+                noEstanAndando1 = true;
+            }
+            FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragmento, new FragmentoAddData());
+            fragmentTransaction.commit();
+        });
+        pareja1Cronometro.setOnClickListener(v -> {
+            if (noEstanAndando1) {
+                pareja1Cronometro.start();
+                pareja1Cronometro.setBase(SystemClock.elapsedRealtime() - pausaPareja1);
+                noEstanAndando1 = false;
+                pareja2Cronometro.stop();
+                pausaPareja2 = SystemClock.elapsedRealtime() - pareja2Cronometro.getBase();
+                noEstanAndando2 = true;
+            } else {
+                pareja2Cronometro.start();
+                pareja2Cronometro.setBase(SystemClock.elapsedRealtime() - pausaPareja2);
+                noEstanAndando2 = false;
+                pareja1Cronometro.stop();
+                pausaPareja1 = SystemClock.elapsedRealtime() - pareja1Cronometro.getBase();
+                noEstanAndando1 = true;
             }
         });
 
-        bData.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (!noEstanAndando2) {
-                    pareja2Cronometro.stop();
-                    pausaPareja2 = SystemClock.elapsedRealtime() - pareja2Cronometro.getBase();
-                    noEstanAndando2 = true;
-                } else if (!noEstanAndando1) {
-                    pareja1Cronometro.stop();
-                    pausaPareja1 = SystemClock.elapsedRealtime() - pareja1Cronometro.getBase();
-                    noEstanAndando1 = true;
-                }
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragmento, new FragmentoAddData());
-                fragmentTransaction.commit();
-            }
-        });
-        pareja1Cronometro.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (noEstanAndando1) {
-                    pareja1Cronometro.start();
-                    pareja1Cronometro.setBase(SystemClock.elapsedRealtime() - pausaPareja1);
-                    noEstanAndando1 = false;
-                    pareja2Cronometro.stop();
-                    pausaPareja2 = SystemClock.elapsedRealtime() - pareja2Cronometro.getBase();
-                    noEstanAndando2 = true;
-                } else {
-                    pareja2Cronometro.start();
-                    pareja2Cronometro.setBase(SystemClock.elapsedRealtime() - pausaPareja2);
-                    noEstanAndando2 = false;
-                    pareja1Cronometro.stop();
-                    pausaPareja1 = SystemClock.elapsedRealtime() - pareja1Cronometro.getBase();
-                    noEstanAndando1 = true;
-                }
-            }
-        });
-
-        pareja2Cronometro.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (noEstanAndando2) {
-                    pareja2Cronometro.start();
-                    pareja2Cronometro.setBase(SystemClock.elapsedRealtime() - pausaPareja2);
-                    noEstanAndando2 = false;
-                    pareja1Cronometro.stop();
-                    pausaPareja1 = SystemClock.elapsedRealtime() - pareja1Cronometro.getBase();
-                    noEstanAndando1 = true;
-                } else {
-                    pareja2Cronometro.stop();
-                    pausaPareja2 = SystemClock.elapsedRealtime() - pareja2Cronometro.getBase();
-                    noEstanAndando2 = true;
-                    pareja1Cronometro.start();
-                    pareja1Cronometro.setBase(SystemClock.elapsedRealtime() - pausaPareja1);
-                    noEstanAndando1 = false;
-                }
+        pareja2Cronometro.setOnClickListener(v -> {
+            if (noEstanAndando2) {
+                pareja2Cronometro.start();
+                pareja2Cronometro.setBase(SystemClock.elapsedRealtime() - pausaPareja2);
+                noEstanAndando2 = false;
+                pareja1Cronometro.stop();
+                pausaPareja1 = SystemClock.elapsedRealtime() - pareja1Cronometro.getBase();
+                noEstanAndando1 = true;
+            } else {
+                pareja2Cronometro.stop();
+                pausaPareja2 = SystemClock.elapsedRealtime() - pareja2Cronometro.getBase();
+                noEstanAndando2 = true;
+                pareja1Cronometro.start();
+                pareja1Cronometro.setBase(SystemClock.elapsedRealtime() - pausaPareja1);
+                noEstanAndando1 = false;
             }
         });
         return vista;
@@ -216,12 +198,12 @@ public class FragmentoRelojDomino extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
+            throw new RuntimeException(context
                     + " must implement OnFragmentInteractionListener");
         }
     }

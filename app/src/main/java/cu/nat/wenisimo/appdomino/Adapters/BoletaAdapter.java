@@ -1,8 +1,9 @@
 package cu.nat.wenisimo.appdomino.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,12 +33,12 @@ public class BoletaAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View row = layoutInflater.inflate(R.layout.row, parent, false);
-        TextView myDatas = (TextView) row.findViewById(R.id.txtDatas);
-        TextView myPuntos1 = (TextView) row.findViewById(R.id.txtPuntos1);
-        TextView myTantos1 = (TextView) row.findViewById(R.id.txtTantos1);
-        TextView myPuntos2 = (TextView) row.findViewById(R.id.txtPuntos2);
-        TextView myTantos2 = (TextView) row.findViewById(R.id.txtTantos2);
+        @SuppressLint("ViewHolder") View row = layoutInflater.inflate(R.layout.row, parent, false);
+        TextView myDatas = row.findViewById(R.id.txtDatas);
+        TextView myPuntos1 = row.findViewById(R.id.txtPuntos1);
+        TextView myTantos1 = row.findViewById(R.id.txtTantos1);
+        TextView myPuntos2 = row.findViewById(R.id.txtPuntos2);
+        TextView myTantos2 = row.findViewById(R.id.txtTantos2);
 
 //        if(position == 0){
 //            myDatas.setPadding(5,5,5,5);
@@ -62,7 +63,7 @@ public class BoletaAdapter extends ArrayAdapter<String> {
 
     private void llenarDataBoleta(ArrayList<Data> listaObtenidos) {
         Integer pareja1 = listaObtenidos.get(0).getPareja_ganadora();
-        Integer Acumulado1 = 0, Acumulado2 = 0;
+        int Acumulado1 = 0, Acumulado2 = 0;
         DataBoleta dataBoleta;
         for (int i = 0; i <= listaObtenidos.size(); i++) {
 //            if (i == 0) {
@@ -77,11 +78,11 @@ public class BoletaAdapter extends ArrayAdapter<String> {
             if (listaObtenidos.get(i).getPareja_ganadora().equals(pareja1)) {
                 dataBoleta.setPuntos1(listaObtenidos.get(i).getPuntos());
                 dataBoleta.setPuntos2(0);
-                Acumulado1 = +listaObtenidos.get(i).getPuntos();
+                Acumulado1 = Acumulado1+ listaObtenidos.get(i).getPuntos();
             } else {
                 dataBoleta.setPuntos1(0);
                 dataBoleta.setPuntos2(listaObtenidos.get(i).getPuntos());
-                Acumulado2 = +listaObtenidos.get(i).getPuntos();
+                Acumulado2 = Acumulado2 + listaObtenidos.get(i).getPuntos();
             }
             dataBoleta.setTantosAcumulados1(Acumulado1);
             dataBoleta.setTantosAcumulados2(Acumulado2);

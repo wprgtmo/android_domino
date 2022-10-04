@@ -2,7 +2,7 @@ package cu.nat.wenisimo.appdomino;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -16,9 +16,9 @@ public class AddData extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_data);
-        pareja1R = (RadioButton) findViewById(R.id.Pareja1);
-        pareja2R = (RadioButton) findViewById(R.id.Pareja2);
-        data = (EditText) findViewById(R.id.editText);
+        pareja1R = findViewById(R.id.Pareja1);
+        pareja2R = findViewById(R.id.Pareja2);
+        data = findViewById(R.id.editText);
         mesasS = getIntent().getStringExtra("rondas");
         rondasS = getIntent().getStringExtra("mesas");
         pareja1 = getIntent().getStringExtra("pareja1");

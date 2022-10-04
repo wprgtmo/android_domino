@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,86 +89,63 @@ public class FragmentoAddData extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         vista = inflater.inflate(R.layout.fragmento_add_data, container, false);
-        iv1 = (ImageView) vista.findViewById(R.id.ivP1Par1);
-        iv2 = (ImageView) vista.findViewById(R.id.ivP1Par2);
-        iv3 = (ImageView) vista.findViewById(R.id.ivP2Par1);
-        iv4 = (ImageView) vista.findViewById(R.id.ivP2Par2);
-        txtP1Jugador1 = (TextView) vista.findViewById(R.id.txtP1Par1);
-        txtP1Jugador2 = (TextView) vista.findViewById(R.id.txtP1Par2);
-        txtP2Jugador1 = (TextView) vista.findViewById(R.id.txtP2Par1);
-        txtP2Jugador2 = (TextView) vista.findViewById(R.id.txtP2Par2);
+        iv1 = vista.findViewById(R.id.ivP1Par1);
+        iv2 = vista.findViewById(R.id.ivP1Par2);
+        iv3 = vista.findViewById(R.id.ivP2Par1);
+        iv4 = vista.findViewById(R.id.ivP2Par2);
+        txtP1Jugador1 = vista.findViewById(R.id.txtP1Par1);
+        txtP1Jugador2 = vista.findViewById(R.id.txtP1Par2);
+        txtP2Jugador1 = vista.findViewById(R.id.txtP2Par1);
+        txtP2Jugador2 = vista.findViewById(R.id.txtP2Par2);
         preferencesClass = new Preference();
         preferencesClass.datos = getActivity().getSharedPreferences("datos", Context.MODE_PRIVATE);
         mesa_id = preferencesClass.datos.getInt(MainActivity.MESA_ID, 0);
         obtenerBoleta(mesa_id);
         parejaS1 = preferencesClass.datos.getString("Pareja1", "");
         parejaS2 = preferencesClass.datos.getString("Pareja2", "");
-        botonOK = (Button) vista.findViewById(R.id.ok);
-        puntosET = (EditText) vista.findViewById(R.id.editText);
+        botonOK = vista.findViewById(R.id.ok);
+        puntosET = vista.findViewById(R.id.editText);
         pareja1 = preferencesClass.datos.getString("Pareja1", "");
         pareja2 = preferencesClass.datos.getString("Pareja2", "");
-        botonOK.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                puntosS = puntosET.getText().toString();
-                if (!puntosS.equals("")) {
-                    if (!paregaGanadoraID.equals(0)) {
-                        Integer puntos = Integer.parseInt(puntosS);
-                        preferencesClass.datos = getActivity().getSharedPreferences("datos", Context.MODE_PRIVATE);
-                        Integer numeroData = preferencesClass.datos.getInt("NumeroData", 0) + 1;
-                        SharedPreferences.Editor Obj_preferences = preferencesClass.datos.edit();
-                        Obj_preferences.putInt("NumeroData", numeroData);
-                        if (preferencesClass.datos.getString("ParejaSalidora", "").equals("Pareja1")) {
-                            Obj_preferences.putString("ParejaSalidora", "Pareja2");
-                        } else if (preferencesClass.datos.getString("ParejaSalidora", "").equals("Pareja2")) {
-                            Obj_preferences.putString("ParejaSalidora", "Pareja1");
-                        }
-                        Obj_preferences.apply();
-
-                        crearData(numeroData, boleta_id, puntos, 0, paregaGanadoraID);
-
-                        Fragment fragmentS;
-                        Bundle datosFragment;
-                        fragmentS = new FragmentoRelojDomino();
-                        datosFragment = new Bundle();
-                        datosFragment.putInt("data", puntos);
-                        datosFragment.putInt("parejaGanadora", paregaGanadoraID);
-                        fragmentS.setArguments(datosFragment);
-                        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.replace(R.id.fragmento, fragmentS);
-                        fragmentTransaction.commit();
-                    } else {
-                        Toast.makeText(getContext(), "Debes escoger el ganador", Toast.LENGTH_LONG).show();
+        botonOK.setOnClickListener(v -> {
+            puntosS = puntosET.getText().toString();
+            if (!puntosS.equals("")) {
+                if (!paregaGanadoraID.equals(0)) {
+                    int puntos = Integer.parseInt(puntosS);
+                    preferencesClass.datos = getActivity().getSharedPreferences("datos", Context.MODE_PRIVATE);
+                    int numeroData = preferencesClass.datos.getInt("NumeroData", 0) + 1;
+                    SharedPreferences.Editor Obj_preferences = preferencesClass.datos.edit();
+                    Obj_preferences.putInt("NumeroData", numeroData);
+                    if (preferencesClass.datos.getString("ParejaSalidora", "").equals("Pareja1")) {
+                        Obj_preferences.putString("ParejaSalidora", "Pareja2");
+                    } else if (preferencesClass.datos.getString("ParejaSalidora", "").equals("Pareja2")) {
+                        Obj_preferences.putString("ParejaSalidora", "Pareja1");
                     }
+                    Obj_preferences.apply();
+
+                    crearData(numeroData, boleta_id, puntos, 0, paregaGanadoraID);
+
+                    Fragment fragmentS;
+                    Bundle datosFragment;
+                    fragmentS = new FragmentoRelojDomino();
+                    datosFragment = new Bundle();
+                    datosFragment.putInt("data", puntos);
+                    datosFragment.putInt("parejaGanadora", paregaGanadoraID);
+                    fragmentS.setArguments(datosFragment);
+                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.fragmento, fragmentS);
+                    fragmentTransaction.commit();
                 } else {
-                    Toast.makeText(getContext(), "Debes llenar todos los campos", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Debes escoger el ganador", Toast.LENGTH_LONG).show();
                 }
+            } else {
+                Toast.makeText(getContext(), "Debes llenar todos los campos", Toast.LENGTH_LONG).show();
             }
         });
-        iv1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParejaGanadora(0, iv1);
-            }
-        });
-        iv2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParejaGanadora(0, iv2);
-            }
-        });
-        iv3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParejaGanadora(1, iv3);
-            }
-        });
-        iv4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParejaGanadora(1, iv4);
-            }
-        });
+        iv1.setOnClickListener(v -> ParejaGanadora(0, iv1));
+        iv2.setOnClickListener(v -> ParejaGanadora(0, iv2));
+        iv3.setOnClickListener(v -> ParejaGanadora(1, iv3));
+        iv4.setOnClickListener(v -> ParejaGanadora(1, iv4));
         return vista;
     }
 
@@ -245,12 +224,12 @@ public class FragmentoAddData extends Fragment implements
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
+            throw new RuntimeException(context
                     + " must implement OnFragmentInteractionListener");
         }
     }
@@ -263,6 +242,10 @@ public class FragmentoAddData extends Fragment implements
 
     @Override
     public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    public void btnOk(View view) {
 
     }
 

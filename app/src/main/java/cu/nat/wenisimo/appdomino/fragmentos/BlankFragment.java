@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,12 +95,12 @@ public class BlankFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         vista = inflater.inflate(R.layout.fragment_blank, container, false);
-        mesasNumero = (TextView) vista.findViewById(R.id.MesaNum);
-        tituloEvento = (TextView) vista.findViewById(R.id.TituloEvento);
-        comentarioEvento = (TextView) vista.findViewById(R.id.DesarolloEvento);
-        textViewPagar = (TextView) vista.findViewById(R.id.TVPagar);
-        imageViewPagar = (ImageView) vista.findViewById(R.id.imgPagar);
-        imageViewEvento = (ImageView) vista.findViewById(R.id.imgEvento);
+        mesasNumero = vista.findViewById(R.id.MesaNum);
+        tituloEvento = vista.findViewById(R.id.TituloEvento);
+        comentarioEvento = vista.findViewById(R.id.DesarolloEvento);
+        textViewPagar = vista.findViewById(R.id.TVPagar);
+        imageViewPagar = vista.findViewById(R.id.imgPagar);
+        imageViewEvento = vista.findViewById(R.id.imgEvento);
         return vista;
     }
 
@@ -110,12 +112,12 @@ public class BlankFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
+            throw new RuntimeException(context
                     + " must implement OnFragmentInteractionListener");
         }
     }
@@ -134,9 +136,9 @@ public class BlankFragment extends Fragment {
 
     private void llenarMesas(ArrayList<Mesa> listaMesasObtenidos) {
         List<String> listaMesas = new ArrayList<>();
-        for (Mesa m : listaMesasObtenidos) {
-
-        }
+//        for (Mesa m : listaMesasObtenidos) {
+//        // Aqui se llenan las mesas
+//        }
     }
 
     private void descargarFoto(String url, ImageView imageView) {

@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,32 +106,24 @@ public class FragmentoConfiguracion extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         vista = inflater.inflate(R.layout.fragment_configuracion, container, false);
-        servidorET = (EditText) vista.findViewById(R.id.servidor);
-        evento = (Spinner) vista.findViewById(R.id.evento);
-        mesas = (Spinner) vista.findViewById(R.id.mesas);
-        actualizar = (Button) vista.findViewById(R.id.actualizar);
-        guardar = (Button) vista.findViewById(R.id.guardar);
+        servidorET = vista.findViewById(R.id.servidor);
+        evento = vista.findViewById(R.id.evento);
+        mesas = vista.findViewById(R.id.mesas);
+        actualizar = vista.findViewById(R.id.actualizar);
+        guardar = vista.findViewById(R.id.guardar);
         actualizar.setVisibility(View.GONE);
         String servidor = preferencesClass.datos.getString("Servidor", "");
         Toast.makeText(getContext(), servidor, Toast.LENGTH_LONG).show();
         servidorET.setText(servidor);
-        actualizar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                obtenerDatos();
-            }
-        });
-        guardar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!servidorET.getText().toString().equals("")) {
-                    SharedPreferences.Editor Obj_preferences = preferencesClass.datos.edit();
-                    Obj_preferences.putString("Servidor", servidorET.getText().toString());
-                    Obj_preferences.apply();
-                    Toast.makeText(getContext(), "Se guardaron los datos", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(), "Llene todos los campos", Toast.LENGTH_SHORT).show();
-                }
+        actualizar.setOnClickListener(v -> obtenerDatos());
+        guardar.setOnClickListener(v -> {
+            if (!servidorET.getText().toString().equals("")) {
+                SharedPreferences.Editor Obj_preferences = preferencesClass.datos.edit();
+                Obj_preferences.putString("Servidor", servidorET.getText().toString());
+                Obj_preferences.apply();
+                Toast.makeText(getContext(), "Se guardaron los datos", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Llene todos los campos", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -148,7 +142,7 @@ public class FragmentoConfiguracion extends Fragment {
         mesas.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Integer mesa = Integer.parseInt(listMesas.get(position).getId());
+                int mesa = Integer.parseInt(listMesas.get(position).getId());
                 preferencesClass.datos = getActivity().getSharedPreferences("datos", Context.MODE_PRIVATE);
                 SharedPreferences.Editor Obj_preferences = preferencesClass.datos.edit();
                 Obj_preferences.putInt(MainActivity.MESA_ID, mesa);
@@ -171,12 +165,12 @@ public class FragmentoConfiguracion extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
+            throw new RuntimeException(context
                     + " must implement OnFragmentInteractionListener");
         }
     }

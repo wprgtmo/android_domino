@@ -3,7 +3,7 @@ package cu.nat.wenisimo.appdomino;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -28,10 +28,10 @@ public class RelojDomino extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reloj_domino);
 
-        pareja1Cronometro = (Chronometer) findViewById(R.id.pareja1CH);
-        pareja2Cronometro = (Chronometer) findViewById(R.id.pareja2CH);
-        pareja1Boton = (Button) findViewById(R.id.pareja1B);
-        pareja2Boton = (Button) findViewById(R.id.pareja2B);
+        pareja1Cronometro = findViewById(R.id.pareja1CH);
+        pareja2Cronometro = findViewById(R.id.pareja2CH);
+        pareja1Boton = findViewById(R.id.pareja1B);
+        pareja2Boton = findViewById(R.id.pareja2B);
         pareja1BotonS = pareja1Boton.getText().toString();
         pareja2BotonS = pareja2Boton.getText().toString();
         mesasS = getIntent().getStringExtra("mesas");
@@ -55,45 +55,37 @@ public class RelojDomino extends AppCompatActivity {
         if (!parejaGanadora.equals("null")) {
             parejasGsnadoras.add(parejaGanadora);
         }
-        pareja1Cronometro.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (noEstanAndando1) {
-                    pareja1Cronometro.setBase(SystemClock.elapsedRealtime() - pausaPareja1);
-                    pareja2Cronometro.stop();
-                    pausaPareja2 = SystemClock.elapsedRealtime() - pareja2Cronometro.getBase();
-                    pareja1Cronometro.start();
-                    noEstanAndando1 = false;
-                    pareja2Cronometro.stop();
-                    pausaPareja2 = SystemClock.elapsedRealtime() - pareja2Cronometro.getBase();
-                    noEstanAndando2 = true;
-                } else {
-                    pareja1Cronometro.stop();
-                    pausaPareja1 = SystemClock.elapsedRealtime() - pareja1Cronometro.getBase();
-                    noEstanAndando1 = true;
-                }
+        pareja1Cronometro.setOnClickListener(v -> {
+            if (noEstanAndando1) {
+                pareja1Cronometro.setBase(SystemClock.elapsedRealtime() - pausaPareja1);
+                pareja2Cronometro.stop();
+                pausaPareja2 = SystemClock.elapsedRealtime() - pareja2Cronometro.getBase();
+                pareja1Cronometro.start();
+                noEstanAndando1 = false;
+                pareja2Cronometro.stop();
+                pausaPareja2 = SystemClock.elapsedRealtime() - pareja2Cronometro.getBase();
+                noEstanAndando2 = true;
+            } else {
+                pareja1Cronometro.stop();
+                pausaPareja1 = SystemClock.elapsedRealtime() - pareja1Cronometro.getBase();
+                noEstanAndando1 = true;
             }
         });
 
-        pareja2Cronometro.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (noEstanAndando2) {
-                    pareja2Cronometro.setBase(SystemClock.elapsedRealtime() - pausaPareja2);
-                    pareja1Cronometro.stop();
-                    pausaPareja1 = SystemClock.elapsedRealtime() - pareja1Cronometro.getBase();
-                    pareja2Cronometro.start();
-                    noEstanAndando2 = false;
-                    pareja1Cronometro.stop();
-                    pausaPareja1 = SystemClock.elapsedRealtime() - pareja1Cronometro.getBase();
-                    noEstanAndando1 = true;
-                } else {
-                    pareja2Cronometro.stop();
-                    pausaPareja2 = SystemClock.elapsedRealtime() - pareja2Cronometro.getBase();
-                    noEstanAndando2 = true;
-                }
+        pareja2Cronometro.setOnClickListener(v -> {
+            if (noEstanAndando2) {
+                pareja2Cronometro.setBase(SystemClock.elapsedRealtime() - pausaPareja2);
+                pareja1Cronometro.stop();
+                pausaPareja1 = SystemClock.elapsedRealtime() - pareja1Cronometro.getBase();
+                pareja2Cronometro.start();
+                noEstanAndando2 = false;
+                pareja1Cronometro.stop();
+                pausaPareja1 = SystemClock.elapsedRealtime() - pareja1Cronometro.getBase();
+                noEstanAndando1 = true;
+            } else {
+                pareja2Cronometro.stop();
+                pausaPareja2 = SystemClock.elapsedRealtime() - pareja2Cronometro.getBase();
+                noEstanAndando2 = true;
             }
         });
 
