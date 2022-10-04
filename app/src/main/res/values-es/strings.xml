@@ -31,4 +31,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="escoger_salidor">Escoger Salidor</string>
+    <string name="pareja2_jugador1">Pareja2 Jugador1</string>
+    <string name="salidor_pareja1">\"Pareja1 \"</string>
+    <string name="salidor_pareja2">\"Pareja2 \"</string>
 </resources>
